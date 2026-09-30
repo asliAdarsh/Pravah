@@ -193,6 +193,42 @@ recomputes the offset relations and the alert set deterministically.
 
 ---
 
+## Branching
+
+Work lands on a feature branch, is aggregated on `features`, is integrated on `dev`, and
+`main` is cut from `dev`.
+
+```
+main                      released, runs end to end
+└── dev                   integration
+    └── features          aggregate of the feature branches
+        ├── feature/backend     service, engines, published datasets
+        ├── feature/frontend    console, twelve screens, theming
+        └── feature/docs        README and docs/
+```
+
+The feature branches are disjoint by area, so merging them into `features` is a union: no
+conflict resolution and no code rewritten to land it. A change follows the same path —
+commit on its feature branch, merge up through `features` and `dev`, then cut `main`.
+
+```bash
+git checkout feature/backend && git commit -am "…"
+git checkout features && git merge --no-ff feature/backend
+git checkout dev        && git merge --no-ff features
+git checkout main       && git merge --no-ff dev
+git push origin main dev features feature/backend feature/frontend feature/docs
+```
+
+### What is and is not committed
+
+Committed: the application and the six published datasets under `backend/data_sources`
+(~11 MB) — Pravah cannot seed without them, so a clone has to be able to run.
+
+Ignored: `node_modules/`, `dist/`, the local SQLite database (`backend/data/`) and
+`.env`. Nothing secret or machine-specific is in the history.
+
+---
+
 ## Product principles enforced in code
 
 1. **Evidence before AI** — scores and prose are derived; the event → document → evidence
@@ -206,10 +242,12 @@ recomputes the offset relations and the alert set deterministically.
    `factors[] = {code, label, value, weight, contribution, detail}` and
    `contribution == weight × value`, asserted by tests.
 5. **Never fabricate source information** — unknown page numbers are `null` and render as
-   "Page not available in prototype record"; excerpts are stored text; every extraction stage
+   "Page not available in this record"; excerpts are stored text; every extraction stage
    reports `SKIPPED` rather than pretending.
-6. **Synthetic data is labelled** — top bar, sidebar note, every data payload
-   (`data_provenance: SYNTHETIC_PROTOTYPE`), every document (`ORIGIN: SIMULATED`).
+6. **The data is cited, not invented** — every record names the published file it came from
+   (`data_provenance: REAL_PUBLIC_DATA`), the banner names the publishers, and the one value
+   Pravah derives rather than reads (the live well's position and formation column) is tagged
+   `15/9 PROXY` wherever it appears.
 7. **Current-well context is always visible** — the context bar is fixed on every screen.
 8. **Distance alone never ranks a well** — spatial proximity is capped at 20% of the relevance
    score; formation (40%) and depth (30%) dominate.
