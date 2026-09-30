@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <!-- Resolve the theme before first paint, otherwise the app flashes white on
+         every load for a dark-mode user. Mirrors src/theme/useTheme.ts. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('pravah.theme') || 'system'
+          var dark =
+            stored === 'dark' ||
+            (stored === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
+    <title>Pravah · Near-Well Intelligence</title>
+    <meta
+      name="description"
+      content="Pravah — Enhanced Real-Time Monitoring, Analysis and Correlation with Near-Well Intelligence. Offset-well correlation and proactive drilling-risk decision support, built on published Norwegian Petroleum Directorate and Equinor Volve records."
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
