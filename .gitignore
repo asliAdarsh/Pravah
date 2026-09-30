@@ -14,3 +14,15 @@ backend/data/
 .DS_Store
 *.log
 .vite/
+
+# Scratch files written while poking at the API by hand, e.g.
+#   curl …/alerts > alert.json
+# Root-anchored so real manifests (frontend/package.json) are unaffected.
+/alert.json
+/bt.json
+/a.json
+/s.json
+/al.json
+/act.json
+/doc.json
+/ev.json
