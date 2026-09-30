@@ -1,0 +1,327 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Pravah design tokens — single source of truth.
+ * Premium enterprise industrial: light ground, navy primary, blue
+ * secondary, green success, orange warning, red reserved for critical
+ * only. Compact type scale, information-dense tables.
+ * ------------------------------------------------------------------ */
+/* Raw palette: fixed hues. Never referenced directly by components — always
+ go through the semantic tokens below so light/dark both work. */
+@theme {
+  --color-navy-50: #f2f6fb;
+  --color-navy-100: #e3ecf6;
+  --color-navy-200: #c2d5ea;
+  --color-navy-300: #90b3d8;
+  --color-navy-400: #5789bf;
+  --color-navy-500: #33689f;
+  --color-navy-600: #245180;
+  --color-navy-700: #1c3f65;
+  --color-navy-800: #152f4b;
+  --color-navy-900: #102138;
+  --color-navy-950: #0a1728;
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+
+  --color-ok-50: #edf9f1;
+  --color-ok-100: #d5f0de;
+  --color-ok-200: #a9e0bd;
+  --color-ok-500: #1f9d55;
+  --color-ok-600: #157f45;
+  --color-ok-700: #106537;
+
+  --color-warn-50: #fff8ed;
+  --color-warn-100: #ffefd6;
+  --color-warn-200: #fddc9e;
+  --color-warn-500: #e07b16;
+  --color-warn-600: #bd6208;
+  --color-warn-700: #994d07;
+
+  --color-crit-50: #fef2f2;
+  --color-crit-100: #fde0e0;
+  --color-crit-200: #f8c4c4;
+  --color-crit-500: #cf3232;
+  --color-crit-600: #b02525;
+  --color-crit-700: #8f1c1c;
+
+  --color-ink-50: #f8fafc;
+  --color-ink-100: #f1f5f9;
+  --color-ink-200: #e2e8f0;
+  --color-ink-300: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
+  --color-ink-900: #0f172a;
+
+  --color-band-info: #2563eb;
+  --color-band-warning: #e07b16;
+  --color-band-high: #c2410c;
+  --color-band-critical: #b02525;
+
+  --color-sev-low: #157f45;
+  --color-sev-moderate: #bd6208;
+  --color-sev-high: #c2410c;
+  --color-sev-critical: #b02525;
+
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.875rem;
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.125rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.375rem;
+
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+
+  --font-mono: 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+/* ------------------------------------------------------------------ *
+ * Semantic surface tokens. `inline` keeps the var() reference live, so
+ * flipping data-theme re-themes every utility with no second stylesheet.
+ * Components use these names only: surface, surface-1/2/3, line, line-strong,
+ * fg, fg-strong, fg-muted, fg-subtle, chrome, accent, ok/warn/crit(+soft/-line),
+ * grid, plot-bg.
+ * ------------------------------------------------------------------ */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-strong: var(--fg-strong);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-chrome: var(--chrome);
+  --color-chrome-2: var(--chrome-2);
+  --color-chrome-fg: var(--chrome-fg);
+  --color-chrome-muted: var(--chrome-muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-ok-line: var(--ok-line);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-warn-line: var(--warn-line);
+  --color-crit: var(--crit);
+  --color-crit-soft: var(--crit-soft);
+  --color-crit-line: var(--crit-line);
+  --color-grid: var(--grid);
+  --color-plot-bg: var(--plot-bg);
+  --color-band-info: var(--band-info);
+  --color-band-warning: var(--band-warning);
+  --color-band-high: var(--band-high);
+  --color-band-critical: var(--band-critical);
+}
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --surface: #eef2f7;
+  --surface-1: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #e8eef6;
+  --line: #dde5ef;
+  --line-strong: #c3cfdf;
+  --fg: #16202f;
+  --fg-strong: #0b1421;
+  --fg-muted: #5c6b80;
+  /* Captions, axis labels, tick text. Measured 4.08:1 on --surface-1 (the
+     previous value was 2.4:1, under the 3:1 secondary-text floor). */
+  --fg-subtle: #6f7f96;
+  --chrome: #102138;
+  --chrome-2: #1b3352;
+  --chrome-fg: #f2f7fc;
+  --chrome-muted: #9db8d6;
+  --accent: #1d4ed8;
+  --accent-fg: #ffffff;
+  --accent-soft: #eef4ff;
+  --accent-line: #c3d8f7;
+  --ok: #157f45;
+  --ok-soft: #edf9f1;
+  --ok-line: #b6e2c8;
+  --warn: #b35f06;
+  --warn-soft: #fff6ea;
+  --warn-line: #f3d29a;
+  --crit: #b02525;
+  --crit-soft: #fdf1f1;
+  --crit-line: #f2c2c2;
+  --grid: #dfe7f0;
+  --plot-bg: #ffffff;
+  --band-info: #1d4ed8;
+  --band-warning: #b35f06;
+  --band-high: #b8430c;
+  --band-critical: #b02525;
+  --shadow-panel: 0 1px 2px 0 rgb(15 23 42 / 0.06);
+  --shadow-raised: 0 10px 28px -10px rgb(15 23 42 / 0.28);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --surface: #0a1220;
+  --surface-1: #121c2d;
+  --surface-2: #172339;
+  --surface-3: #1f2d47;
+  --line: #24324c;
+  --line-strong: #35476a;
+  --fg: #dde6f2;
+  --fg-strong: #f4f8fd;
+  --fg-muted: #97a8c0;
+  --fg-subtle: #6d7f9a;
+  --chrome: #060d18;
+  --chrome-2: #101d31;
+  --chrome-fg: #e6eef8;
+  --chrome-muted: #8095b3;
+  --accent: #6ba6ff;
+  --accent-fg: #061120;
+  --accent-soft: #14274a;
+  --accent-line: #2c4d84;
+  --ok: #4fc78d;
+  --ok-soft: #0e2a1f;
+  --ok-line: #1f5138;
+  --warn: #f0a04b;
+  --warn-soft: #2b1e0c;
+  --warn-line: #5a3f18;
+  --crit: #f4797c;
+  --crit-soft: #2d1417;
+  --crit-line: #5f2629;
+  --grid: #223049;
+  --plot-bg: #0f1929;
+  --band-info: #6ba6ff;
+  --band-warning: #f0a04b;
+  --band-high: #f97b4d;
+  --band-critical: #f4797c;
+  --shadow-panel: 0 1px 2px 0 rgb(0 0 0 / 0.45);
+  --shadow-raised: 0 12px 30px -12px rgb(0 0 0 / 0.7);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--fg);
+    font-family:
+      Inter, 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    font-feature-settings: 'tnum' 0;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--fg-strong);
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  /* Native controls (scrollbars, selects, checkboxes) follow the theme. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--fg-subtle);
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  /* Numeric readouts: depth, TVD, scores, deltas. */
+  .tnum {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* The one card surface. Everything else composes from this. */
+  .panel-surface {
+    background-color: var(--surface-1);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-panel);
+  }
+
+  /* Inset well inside a card: reference data, quoted evidence, code. */
+  .inset-surface {
+    background-color: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  /* Always-visible synthetic-data provenance strip. */
+  .prov-strip {
+    background-image: repeating-linear-gradient(
+      135deg,
+      var(--warn-soft) 0px,
+      var(--warn-soft) 8px,
+      var(--surface-1) 8px,
+      var(--surface-1) 16px
+    );
+    border-bottom: 1px solid var(--warn-line);
+    color: var(--fg-muted);
+  }
+
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  /* Plot/chart well. */
+  .plot-surface {
+    background-color: var(--plot-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  /* Skeleton shimmer, theme-safe. */
+  .skeleton-block {
+    background: linear-gradient(
+      90deg,
+      var(--surface-2) 0%,
+      var(--surface-3) 50%,
+      var(--surface-2) 100%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
