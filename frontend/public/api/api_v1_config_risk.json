@@ -1,0 +1,1 @@
+{"min_support_wells":2,"tvd_tolerance_m":60.0,"min_relevance":0.25,"formation_match_required":true,"weights":{"historical_event_match":0.35,"depth_proximity":0.25,"formation_similarity":0.2,"nearby_well_support":0.15,"operational_similarity":0.05},"severity_thresholds":{"WARNING":0.45,"HIGH":0.6,"CRITICAL":0.78},"method":"PROTOTYPE_HEURISTIC"}

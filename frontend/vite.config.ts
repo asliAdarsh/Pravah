@@ -25,15 +25,22 @@ export default defineConfig({
       },
     },
   },
-  // `vite preview` serves the production build; it needs the same /api proxy as
-  // the dev server or a built bundle cannot reach the backend.
-  preview: {
-    port: 5173,
-    proxy: {
-      '/api': {
-        target: BACKEND_ORIGIN,
-        changeOrigin: true,
-      },
-    },
-  },
+  // `vite preview` serves the production build and normally needs the same /api
+  // proxy as the dev server. A static build is the exception: there is no
+  // backend, and `/api` holds the exported snapshot the console reads directly.
+  // Proxying it turns every read into a connection error, so the proxy is
+  // omitted when VITE_STATIC_DATA is set.
+  ...(process.env.VITE_STATIC_DATA === '1'
+    ? {}
+    : {
+        preview: {
+          port: 5173,
+          proxy: {
+            '/api': {
+              target: BACKEND_ORIGIN,
+              changeOrigin: true,
+            },
+          },
+        },
+      }),
 })
