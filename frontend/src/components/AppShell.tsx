@@ -9,6 +9,7 @@ import { bandTone, fmtKm, fmtMeters, humanizeEnum, wellStatusTone } from '@/lib/
 import { Api } from '@/api/client'
 import type { NearbyResponse } from '@/api/types'
 import { useAsyncData } from '@/lib/useAsyncData'
+import { STATIC_DATA } from '@/api/client'
 import { useApp } from '@/store/useApp'
 import { isProxyFormation, isProxyPosition, ProxyTag } from '@/pages/_calm'
 
@@ -234,10 +235,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           {meta?.dataset_label ?? 'Real public data'}
         </span>
         <span className="truncate text-fg-muted">
-          {meta?.data_sources?.length
-            ? meta.data_sources.map((source) => source.publisher).filter(Boolean).join(' · ')
-            : 'Norwegian Petroleum Directorate FactPages · Equinor Volve'}{' '}
-          · scores are heuristics, not operational guidance.
+          {STATIC_DATA
+            ? 'Read-only build — served from a published snapshot of the real API responses.'
+            : `${meta?.data_sources?.length
+                ? meta.data_sources.map((source) => source.publisher).filter(Boolean).join(' · ')
+                : 'Norwegian Petroleum Directorate FactPages · Equinor Volve'}` +
+              ' · scores are heuristics, not operational guidance.'}
         </span>
         <Link
           to="/settings"

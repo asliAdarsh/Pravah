@@ -1,0 +1,5 @@
+# Netlify SPA routing.
+# The exported API snapshot is served as-is; everything else falls back to
+# the app shell, so deep links like /validation resolve instead of 404.
+/api/*   /api/:splat   200
+/*       /index.html   200
