@@ -193,6 +193,59 @@ recomputes the offset relations and the alert set deterministically.
 
 ---
 
+## Deploying
+
+The console deploys to any static host. There is no server to run: the app is built with
+`VITE_STATIC_DATA=1` and reads an exported snapshot of the real API's responses
+(`frontend/public/api/`, committed to the repo), so every screen renders real data with no
+backend, no cold start and no database.
+
+```bash
+# rebuild the snapshot from a seeded backend (only after the data or an engine changes)
+python backend/run.py                     # in one terminal
+python backend/tools/export_snapshot.py   # in another
+
+npm --prefix frontend ci
+npm --prefix frontend run build:static    # -> frontend/dist
+```
+
+### Netlify (fastest — no CLI, no config)
+
+Drag **`frontend/dist`** onto <https://app.netlify.com/drop>. That is the whole deploy;
+`public/_redirects` handles the SPA routing.
+
+### Vercel
+
+Import the repository and set the **root directory** to `frontend`. `frontend/vercel.json`
+supplies the build command, output directory and the rewrite that keeps `/api` out of the
+SPA rule. Or from a clone:
+
+```bash
+npx vercel --prod          # first run opens a browser to sign in
+```
+
+### What a static deployment can and cannot do
+
+Reads work completely — all twelve screens, search, the evidence drawer, the decision panel,
+the graph explorer. Writes do not: acknowledging an alert, adding a note, recomputing an
+engine and ingesting a document need the live service, so they are **refused with a plain
+message** and the banner reads *Read-only build*. Nothing simulates a save.
+
+If you want the writes, run the app as it is locally (`python backend/run.py` + `npm run
+dev`) or deploy the API to a host that runs Python, and build the console normally
+(`npm run build`) with `VITE_API_BASE` pointing at it.
+
+### Checking a build before you publish it
+
+`python -m http.server` has no SPA fallback, so deep links 404 and the check lies to you.
+Use the helper, which applies the same file-then-shell rule the two hosts do:
+
+```bash
+python frontend/tools/serve_dist.py --dir frontend/dist --port 4173
+```
+
+---
+
 ## Branching
 
 Work lands on a feature branch, is aggregated on `features`, is integrated on `dev`, and
