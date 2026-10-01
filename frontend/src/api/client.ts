@@ -108,9 +108,81 @@ interface RequestOptions {
   formData?: FormData
 }
 
+/**
+ * Static deployments.
+ *
+ * A static host has no Python service, so the console is built with
+ * `VITE_STATIC_DATA=1` and reads the snapshot exported by
+ * `backend/tools/export_snapshot.py` — the real API's responses on the real
+ * seeded corpus, frozen at export time. Nothing is re-derived here.
+ *
+ * Reads resolve through `index.json`: exact `METHOD /path?sorted=query` first,
+ * then the bare `METHOD /path`. Writes have no snapshot and are refused with a
+ * plain message rather than faking a success.
+ */
+export const STATIC_DATA = import.meta.env.VITE_STATIC_DATA === '1'
+
+const SNAPSHOT_ROOT = '/api'
+let snapshotIndex: Promise<Record<string, string>> | null = null
+
+function loadSnapshotIndex(): Promise<Record<string, string>> {
+  snapshotIndex ??= fetch(`${SNAPSHOT_ROOT}/index.json`)
+    .then((response) => (response.ok ? response.json() : { keys: {} }))
+    .then((body: { keys?: Record<string, string> }) => body.keys ?? {})
+    .catch(() => ({}))
+  return snapshotIndex
+}
+
+function snapshotQuery(body: unknown): string {
+  if (!body || typeof body !== 'object' || !('query' in body)) return ''
+  const query = String((body as { query: unknown }).query ?? '').trim()
+  return query ? `?q=${encodeURIComponent(query)}` : ''
+}
+
+async function readFromSnapshot<T>(
+  path: string,
+  method: 'GET' | 'POST',
+  params: QueryParams,
+  body: unknown,
+): Promise<T> {
+  const query = method === 'POST' ? snapshotQuery(body) : buildQuery(params).slice(1)
+  const keys = await loadSnapshotIndex()
+  // The manifest is keyed on the request as it goes to the server, so the
+  // deployment base belongs in the key. Exact query first, then the bare path —
+  // every exported path also has a query-free variant.
+  // The export registers a well id in both spellings (raw for the wells/*
+  // templates, percent-encoded for telemetry/* and query builders), so an exact
+  // key is enough. The bare path is the fallback for a query never exported.
+  const base = `${method} ${API_BASE}${path}`
+  const candidates = query ? [`${base}?${query}`, base] : [base]
+  for (const key of candidates) {
+    const name = keys[key]
+    if (!name) continue
+    const response = await fetch(`${SNAPSHOT_ROOT}/${name}`)
+    if (response.ok) return (await response.json()) as T
+  }
+  throw new ApiError(
+    path,
+    404,
+    method === 'GET'
+      ? `No exported snapshot for ${path}. Re-run backend/tools/export_snapshot.py.`
+      : `This is a read-only deployment, so ${path} cannot be performed. It needs the live API.`,
+  )
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, params, signal, timeoutMs = DEFAULT_TIMEOUT_MS, formData } =
     options
+  if (STATIC_DATA) {
+    if (formData) {
+      throw new ApiError(
+        path,
+        405,
+        'This deployment is read-only, so a document cannot be ingested. Run the app locally to exercise ingestion.',
+      )
+    }
+    return readFromSnapshot<T>(path, method, params ?? {}, body)
+  }
   const url = `${API_BASE}${path}${buildQuery(params)}`
 
   const controller = new AbortController()
